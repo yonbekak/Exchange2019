@@ -1,3 +1,9 @@
+#Post Installation Setup includes
+#Enable Remote Desktop
+#Setup Time Zone Settng
+#Set IP Address to Static
+#Set DNS
+#Rename the Serve Name
 Get-NetAdapter
 
 New-NetIPAddress –IPAddress 192.168.151.254 -DefaultGateway 192.168.151.1 -PrefixLength 24 -InterfaceIndex (Get-NetAdapter).InterfaceIndex

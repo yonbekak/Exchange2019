@@ -1,0 +1,60 @@
+#Post Installation Setup includes
+#Enable Remote Desktop
+#Setup Time Zone Settng
+#Set IP Address to Static
+#Set DNS ->should point to DC
+#Rename the Serve Name
+
+Get-NetAdapter
+
+New-NetIPAddress –IPAddress 192.168.151.253 -DefaultGateway 192.168.151.1 -PrefixLength 24 -InterfaceIndex (Get-NetAdapter).InterfaceIndex
+
+Set-DNSClientServerAddress –InterfaceIndex (Get-NetAdapter).InterfaceIndex –ServerAddresses 192.168.151.253
+
+Rename-Computer -NewName mail
+
+Add-Computer -DomainName APPTECH.COM -Credential (Get-Credential APPTECH\adminuser)  -Restart -Force
+
+# Install .NET Framework 4.8: The next step is to install .NET Framework 4.8 on Windows Server where you will install Exchange 2019.
+# https://download.visualstudio.microsoft.com/download/pr/014120d7-d689-4305-befd-3cb711108212/0fd66638cde16859462a6243a4629a50/ndp48-x86-x64-allos-enu.exe
+
+
+#Install Visual C++ Redistributable Package for Visual Studio 2012.
+#https://www.microsoft.com/download/details.aspx?id=30679
+
+#Install Unified Communications Managed API (UCMA) 4.0.
+#https://www.microsoft.com/download/details.aspx?id=34992
+
+#Restart machine.
+
+#Install the Remote Tools Administration Pack. Open Windows PowerShell and run below command.
+
+Install-WindowsFeature RSAT-ADDS
+
+#Install Windows components those are required for Exchange installation.
+
+Install-WindowsFeature Server-Media-Foundation, NET-Framework-45-Core, NET-Framework-45-ASPNET, NET-WCF-HTTP-Activation45, NET-WCF-Pipe-Activation45, NET-WCF-TCP-Activation45, NET-WCF-TCP-PortSharing45, RPC-over-HTTP-proxy, RSAT-Clustering, RSAT-Clustering-CmdInterface, RSAT-Clustering-Mgmt, RSAT-Clustering-PowerShell, WAS-Process-Model, Web-Asp-Net45, Web-Basic-Auth, Web-Client-Auth, Web-Digest-Auth, Web-Dir-Browsing, Web-Dyn-Compression, Web-Http-Errors, Web-Http-Logging, Web-Http-Redirect, Web-Http-Tracing, Web-ISAPI-Ext, Web-ISAPI-Filter, Web-Lgcy-Mgmt-Console, Web-Metabase, Web-Mgmt-Console, Web-Mgmt-Service, Web-Net-Ext45, Web-Request-Monitor, Web-Server, Web-Stat-Compression, Web-Static-Content, Web-Windows-Auth, Web-WMI, Windows-Identity-Foundation, RSAT-ADDS
+
+
+#Next we will extend Active Directory schema so that Exchange attributes can be added within Active Directory objects. 
+#To extend Active Directory schema, run below command in command prompt on the same machine.
+#Chagnge to the Exchange Server Virtual Drive - D:
+D:\>Setup.exe /PrepareSchema /IAcceptExchangeServerLicenseTerms_DiagnosticDataOFF
+
+#After extending Active Directory schema we will prepare Active Directory for Exchange. #
+#During this step, Exchange will create containers, objects, and other items in 
+#Active Directory to store information. Run below command in command prompt.
+
+Setup.exe /PrepareAD /OrganizationName:"Org Name" /IAcceptExchangeServerLicenseTerms_DiagnosticDataOFF
+
+#In the next step we will prepare Active Directory domains where Exchange 
+#servers will be installed. This step creates additional containers and 
+#security groups, and sets the permissions so Exchange can access them. 
+#Run below command to prepare Active Directory domains.
+
+Setup.exe /PrepareAllDomains /IAcceptExchangeServerLicenseTerms_DiagnosticDataOFF
+
+#Restart the Server
+
+
+  
