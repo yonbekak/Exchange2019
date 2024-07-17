@@ -1,0 +1,17 @@
+Get-NetAdapter
+
+New-NetIPAddress –IPAddress 192.168.151.254 -DefaultGateway 192.168.151.1 -PrefixLength 24 -InterfaceIndex (Get-NetAdapter).InterfaceIndex
+
+Set-DNSClientServerAddress –InterfaceIndex (Get-NetAdapter).InterfaceIndex –ServerAddresses 127.0.0.1
+
+Rename-Computer -NewName DCSRVR
+
+Get-WindowsFeature -Name AD-Domain-Services
+
+Install-WindowsFeature -Name AD-Domain-Services -IncludeManagementTools
+
+Get-WindowsFeature -Name AD-Domain-Services
+
+Install-ADDSForest -DomainName APPTECH.COM -DomainNetBIOSName APPTECH -InstallDNS
+
+  
